@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atoms and Molecules - Stunning NCERT Adventure</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.8;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #e0f7fa 0%, #f0f4f8 100%);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(90deg, #ff6f61, #6b48ff);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            animation: glow 3s infinite alternate;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        header h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: bounceIn 1.5s;
+        }
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        section {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        section:hover {
+            transform: translateY(-5px);
+        }
+        h2 {
+            color: #6b48ff;
+            font-size: 2.5em;
+            border-bottom: 3px solid #ff6f61;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #ff6f61;
+            animation: pulse 2s infinite;
+        }
+        p {
+            font-size: 1.2em;
+            color: #333;
+        }
+        .highlight {
+            color: #ff6f61;
+            font-weight: bold;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.5s;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        .animation-container {
+            text-align: center;
+            margin: 30px 0;
+            background: #fff3f3;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .atom-animation {
+            width: 250px;
+            height: 250px;
+            position: relative;
+            margin: auto;
+            animation: rotate 10s linear infinite;
+        }
+        .nucleus {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ff4500, #ff8c00);
+            border-radius: 50%;
+            position: absolute;
+            top: 95px;
+            left: 95px;
+            box-shadow: 0 0 10px #ff4500;
+        }
+        .electron {
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, #1e90ff, #87cefa);
+            border-radius: 50%;
+            position: absolute;
+            animation: orbit 2s linear infinite;
+            box-shadow: 0 0 5px #1e90ff;
+        }
+        .electron1 { top: 0; left: 117.5px; animation-duration: 3s; }
+        .electron2 { top: 235px; left: 117.5px; animation-duration: 4s; }
+        .electron3 { top: 117.5px; left: 0; animation-duration: 5s; }
+        .electron4 { top: 117.5px; left: 235px; animation-duration: 2.5s; }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(125px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(125px) rotate(-360deg); }
+        }
+        @keyframes pulse {
+            0% { width: 50px; }
+            50% { width: 70px; }
+            100% { width: 50px; }
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #6b48ff; }
+            to { box-shadow: 0 0 20px #ff6f61; }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }

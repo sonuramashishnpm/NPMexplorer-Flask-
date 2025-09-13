@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPM</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='NPMstyles.css')}}">
+    <line rel="icon" href="{{url_for('static', filename='NPM.png')}}">
+</head>
+<body>
+     <h1>📘 NPM Explorer - Project Documentation</h1>
+
+  <section>
+    <h2>🧠 Introduction</h2>
+    <p><span class="highlight">NPM Explorer</span> is an all-in-one tech platform built for students, developers, and AI enthusiasts. It integrates education resources, live stock analysis, news updates, and smart AI tools — in one powerful web interface.</p>
+  </section>
+   <section>
+    <h2>🎯 Purpose</h2>
+    <p>This project aims to provide a comprehensive learning and information hub, making it easier for users to access educational content, stay updated with the latest news, analyze stock market trends, and interact with AI-driven chatbots.</p>
+  <section>
+    <h2>💡 Features</h2>
+    <ul>
+      <li><strong>Education Tab:</strong> Class 8–12 subjects, AI-generated PDFs and certification.</li>
+      <li><strong>News Section:</strong> Latest technology and world news via NewsAPI.</li>
+      <li><strong>Stock Market:</strong> Real-time data with charts and AI predictions.</li>
+      <li><strong>AI Chatbot:</strong> Powered by GPT-based tech for interactive Q&A.</li>
+      <li><strong>Login/Signup System:</strong> User authentication with data saving.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🖥 Layout Overview</h2>
+    <ul>
+      <li><strong>Header:</strong> Logo + Navigation Menu</li>
+      <li><strong>Main Tabs:</strong> Education | News | Stocks | AI Chat</li>
+      <li><strong>Dynamic Panel:</strong> Shows content based on selected tab</li>
+      <li><strong>Footer:</strong> External links and creator credit</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>⚙️ Technologies Used</h2>
+    <ul>
+      <li><code>HTML5</code> & <code>CSS3</code> for structure & styling</li>
+      <li><code>JavaScript</code> for tab switching, API calls</li>
+      <li><code>Netlify</code> for live hosting</li>
+      <li><code>yFinance API</code>, <code>NewsAPI</code>, <code>Wikipedia API</code></li>
+      <li><code>SQLite</code> used for storing user data locally</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📁 Folder Structure</h2>
+    <pre><code>
+📁 NPMExplorer/
+│
+├── index.html
+├── styles.css
+├── script.js
+├── /assets/
+│   └── logo.png
+├── /api/
+│   └── stock_fetch.js
+    </code></pre>
+  </section>
+
+  <section>
+    <h2>🔗 API Integration</h2>
+    <ul>
+      <li><strong>Stock API:</strong> <code>https://query1.finance.yahoo.com/v7/finance/chart/{symbol}</code></li>
+      <li><strong>News API:</strong> <code>https://newsapi.org/v2/top-headlines?country=in</code></li>
+      <li><strong>Wikipedia Summary:</strong> <code>https://en.wikipedia.org/api/rest_v1/page/summary/{query}</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🚀 Deployment Guide (Netlify)</h2>
+    <ol>
+      <li>Push your code to GitHub</li>
+      <li>Login to Netlify and connect your GitHub repo</li>
+      <li>Set Build Command: <code>npm run build</code> (if using a bundler)</li>
+      <li>Set Publish Directory: <code>dist</code> or <code>build</code></li>
+      <li>Deploy and share your live link!</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>🤝 Contributing</h2>
+    <ul>
+      <li>Report bugs or issues on the GitHub repo</li>
+      <li>Create Pull Requests for new features or fixes</li>
+      <li>Respect code style and comment guidelines</li>
+      <li>Support by giving it a ⭐️ if you like the project</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>📬 Contact & Credits</h2>
+    <p><strong>Developer:</strong> Sonu Ramashish (NPM Dev)</p>
+    <p><strong>Email:</strong> <code>npmdev@explorer.com</code></p>
+    <p><strong>Project:</strong> <a href="https://npmexplorer.netlify.app" target="_blank">npmexplorer.netlify.app</a></p>
+  </section>
+
+</body>
+</html>
+
+
+ 

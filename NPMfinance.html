@@ -1,0 +1,1139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPMfinance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="{{url_for('static', filename='NPMfinance.jpg')}}" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        body.light-theme {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #1e3a8a;
+        }
+        .header, .welcome, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        .header {
+            background: linear-gradient(to right, #1e3a8a, #1e40af);
+            text-align: center;
+            padding: 1rem;
+            font-size: 1.5rem;
+        }
+        body.light-theme .header {
+            background: linear-gradient(to right, #dbeafe, #bfdbfe);
+        }
+        .welcome {
+            text-align: center;
+            padding: 1rem;
+            font-size: 1.25rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .dashboard, .budgetdiv, .emidiv, .sipdiv, .fddiv, .goaldiv, .portfoliodiv, .currencydiv, .tips, .manage-data {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        body.light-theme .dashboard, body.light-theme .budgetdiv, body.light-theme .emidiv, body.light-theme .sipdiv, body.light-theme .fddiv, body.light-theme .goaldiv, body.light-theme .portfoliodiv, body.light-theme .currencydiv, body.light-theme .tips, body.light-theme .manage-data {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        @media (min-width: 640px) {
+            .dashboard .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .dashboard .grid div {
+            background: #374151;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        body.light-theme .dashboard .grid div {
+            background: #e5e7eb;
+        }
+        .tool-selector select {
+            background: #374151;
+            color: #ffffff;
+            padding: 0.5rem;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+        }
+        body.light-theme .tool-selector select {
+            background: #d1d5db;
+            color: #1e3a8a;
+        }
+        .hidden {
+            display: none;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        @media (min-width: 640px) {
+            form {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+        }
+        input, select, button {
+            padding: 0.5rem;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            background: #374151;
+            color: #ffffff;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        body.light-theme input, body.light-theme select, body.light-theme button {
+            background: #d1d5db;
+            color: #1e3a8a;
+            border-color: #9ca3af;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.5);
+        }
+        button {
+            background: #D4AF37;
+            color: #1e3a8a;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #ca8a04;
+            transform: translateY(-1px);
+        }
+        body.light-theme button {
+            background: #ca8a04;
+        }
+        body.light-theme button:hover {
+            background: #a16207;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: #374151;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        body.light-theme ul li {
+            background: #d1d5db;
+        }
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-btn {
+            color: #60a5fa;
+        }
+        .delete-btn {
+            color: #f87171;
+        }
+        body.light-theme .edit-btn {
+            color: #2563eb;
+        }
+        body.light-theme .delete-btn {
+            color: #dc2626;
+        }
+        #sipChart, #portfolio-chart {
+            max-height: 200px;
+        }
+        #tips-carousel {
+            min-height: 40px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-navy-900 text-white font-roboto min-h-screen">
+    <header class="header">NPMfinance
+        <button id="theme-toggle" aria-label="Toggle theme">Toggle Theme</button>
+        <select id="language-select" aria-label="Select language">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+        </select>
+    </header>
+    <h1 class="welcome">NPMfinance Welcomes You</h1>
+    <div class="container">
+        <!-- Dashboard Overview -->
+        <div class="dashboard">
+            <h2>Dashboard</h2>
+            <div class="grid">
+                <div><p>Total Balance</p><p>₹<span id="dashboard-balance">0</span></p></div>
+                <div><p>Recent EMI</p><p>₹<span id="dashboard-emi">0</span></p></div>
+                <div><p>Total Investments</p><p>₹<span id="dashboard-investments">0</span></p></div>
+            </div>
+        </div>
+        <div id="analysis-summary"></div>
+
+        <!-- Tool Selector -->
+        <div class="tool-selector">
+            <label for="search">Select Tool:</label>
+            <select id="search" aria-label="Select financial tool">
+                <option value="">--Select an option--</option>
+                <option value="budget">Budget Tracker</option>
+                <option value="emi">EMI Calculator</option>
+                <option value="sip">SIP Calculator</option>
+                <option value="fd">FD Calculator</option>
+                <option value="goal">Goal Setting</option>
+                <option value="portfolio">Investment Portfolio</option>
+                <option value="currency">Currency Converter</option>
+            </select>
+        </div>
+        <!-- Budget Tracker -->
+        <div class="budgetdiv hidden">
+            <h3>Budget Tracker</h3>
+            <form id="budgetForm">
+                <input type="text" id="desc" placeholder="Description" required aria-label="Transaction description">
+                <input type="number" id="amount" placeholder="Amount (+income, -expense)" required step="0.01" aria-label="Transaction amount">
+                <select id="category" aria-label="Transaction category">
+                    <option value="Other">Other</option>
+                    <option value="Food">Food</option>
+                    <option value="Rent">Rent</option>
+                    <option value="Salary">Salary</option>
+                    <option value="Utilities">Utilities</option>
+                </select>
+                <input type="date" id="date" required aria-label="Transaction date">
+                <button type="submit">Add</button>
+            </form>
+            <div class="stats">
+                <p><strong>Total Income:</strong> ₹<span id="total-income">0</span></p>
+                <p><strong>Total Expenses:</strong> ₹<span id="total-expenses">0</span></p>
+                <p><strong>Net Savings:</strong> ₹<span id="net-savings">0</span></p>
+            </div>
+            <ul id="transactions"></ul>
+            <button id="export-transactions">Export Transactions</button>
+            <input type="file" id="import-transactions" accept=".json" class="hidden">
+            <button id="import-transactions-btn">Import Transactions</button>
+        </div>
+        <!-- EMI Calculator -->
+        <div class="emidiv hidden">
+            <h3>EMI Calculator</h3>
+            <form id="emiForm">
+                <input type="number" id="emiPrincipal" placeholder="Principal Amount" required min="1" step="0.01" aria-label="Principal amount">
+                <input type="number" id="emiRate" placeholder="Annual Interest Rate (%)" required min="0" step="0.01" aria-label="Interest rate">
+                <input type="number" id="emiTenure" placeholder="Tenure (months)" required min="1" step="1" aria-label="Tenure">
+                <button type="submit">Calculate</button>
+            </form>
+            <div id="emiResult"></div>
+            <div id="emiHistory"></div>
+        </div>
+        <!-- SIP Calculator -->
+        <div class="sipdiv hidden">
+            <h3>SIP Calculator</h3>
+            <form id="sipForm">
+                <input type="number" id="sipAmount" placeholder="Monthly Investment" required min="1" step="0.01" aria-label="Monthly investment">
+                <input type="number" id="sipRate" placeholder="Annual Interest Rate (%)" required min="0" step="0.01" aria-label="Interest rate">
+                <input type="number" id="sipYears" placeholder="Years" required min="1" step="1" aria-label="Investment years">
+                <input type="number" id="sipInflation" placeholder="Inflation Rate (%)" value="6" min="0" step="0.01" aria-label="Inflation rate">
+                <button type="submit">Calculate</button>
+            </form>
+            <div id="sipResult"></div>
+            <canvas id="sipChart" style="max-height: 200px;"></canvas>
+            <div id="sipHistory"></div>
+        </div>
+        <!-- FD Calculator -->
+        <div class="fddiv hidden">
+            <h3>FD Calculator</h3>
+            <form id="fdForm">
+                <input type="number" id="fdAmount" placeholder="Deposit Amount" required min="1" step="0.01" aria-label="Deposit amount">
+                <input type="number" id="fdRate" placeholder="Annual Interest Rate (%)" required min="0" step="0.01" aria-label="Interest rate">
+                <input type="number" id="fdYears" placeholder="Years" required min="1" step="1" aria-label="Investment years">
+                <select id="fdFrequency" aria-label="Compounding frequency">
+                    <option value="1">Annually</option>
+                    <option value="4">Quarterly</option>
+                    <option value="12">Monthly</option>
+                </select>
+                <button type="submit">Calculate</button>
+            </form>
+            <div id="fdResult"></div>
+            <div id="fdHistory"></div>
+        </div>
+        <!-- Goal Setting -->
+        <div class="goaldiv hidden">
+            <h3>Goal Setting</h3>
+            <form id="goalForm">
+                <input type="text" id="goalDesc" placeholder="Goal Description" required aria-label="Goal description">
+                <input type="number" id="goalAmount" placeholder="Target Amount" required min="1" step="0.01" aria-label="Target amount">
+                <input type="number" id="goalMonths" placeholder="Months to Achieve" required min="1" step="1" aria-label="Months">
+                <button type="submit">Add Goal</button>
+            </form>
+            <ul id="goals"></ul>
+        </div>
+        <!-- Investment Portfolio -->
+        <div class="portfoliodiv hidden">
+            <h3>Investment Portfolio</h3>
+            <ul id="portfolio-items"></ul>
+            <canvas id="portfolio-chart" style="max-height: 200px;"></canvas>
+        </div>
+        <!-- Currency Converter -->
+        <div class="currencydiv hidden">
+            <h3>Currency Converter</h3>
+            <form id="currencyForm">
+                <input type="number" id="currencyAmount" placeholder="Amount" required min="1" step="0.01" aria-label="Amount to convert">
+                <select id="fromCurrency" aria-label="From currency">
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+                <select id="toCurrency" aria-label="To currency">
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+                <button type="submit">Convert</button>
+            </form>
+            <div id="currencyResult"></div>
+        </div>
+        <!-- Financial Tips -->
+        <div class="tips">
+            <h3>Financial Tips</h3>
+            <div id="tips-carousel"></div>
+            <button id="prev-tip">Previous</button>
+            <button id="next-tip">Next</button>
+        </div>
+        <!-- Manage Data -->
+        <div class="manage-data">
+            <h3>Manage Data</h3>
+            <button id="export-all">Export All Data</button>
+            <input type="file" id="import-all" accept=".json" class="hidden">
+            <button id="import-all-btn">Import All Data</button>
+            <button id="clear-all">Clear All Data</button>
+            <button id="export-pdf">Export as PDF</button>
+        </div>
+    </div>
+    <script>
+        let transactions = [];
+        let emiHistory = [];
+        let sipHistory = [];
+        let fdHistory = [];
+        let goals = [];
+        let portfolio = [];
+        let theme = 'dark';
+        let language = 'en';
+
+        // Load data from localStorage
+        function loadData() {
+            try {
+                const savedTransactions = localStorage.getItem('transactions');
+                if (savedTransactions) transactions = JSON.parse(savedTransactions) || [];
+                const savedEmiHistory = localStorage.getItem('emiHistory');
+                if (savedEmiHistory) emiHistory = JSON.parse(savedEmiHistory) || [];
+                const savedSipHistory = localStorage.getItem('sipHistory');
+                if (savedSipHistory) sipHistory = JSON.parse(savedSipHistory) || [];
+                const savedFdHistory = localStorage.getItem('fdHistory');
+                if (savedFdHistory) fdHistory = JSON.parse(savedFdHistory) || [];
+                const savedGoals = localStorage.getItem('goals');
+                if (savedGoals) goals = JSON.parse(savedGoals) || [];
+                const savedPortfolio = localStorage.getItem('portfolio');
+                if (savedPortfolio) portfolio = JSON.parse(savedPortfolio) || [];
+                theme = localStorage.getItem('theme') || 'dark';
+                language = localStorage.getItem('language') || 'en';
+                document.body.classList.toggle('light-theme', theme === 'light');
+                document.getElementById('theme-toggle').textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
+                document.getElementById('language-select').value = language;
+                console.log('Data loaded successfully');
+                updateLanguage();
+                renderAll();
+            } catch (e) {
+                console.error('Error loading data:', e);
+                localStorage.clear(); // Reset to avoid repeated errors
+                console.log('localStorage cleared due to error');
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                localStorage.setItem('emiHistory', JSON.stringify(emiHistory));
+                localStorage.setItem('sipHistory', JSON.stringify(sipHistory));
+                localStorage.setItem('fdHistory', JSON.stringify(fdHistory));
+                localStorage.setItem('goals', JSON.stringify(goals));
+                localStorage.setItem('portfolio', JSON.stringify(portfolio));
+                localStorage.setItem('theme', theme);
+                localStorage.setItem('language', language);
+                console.log('Data saved successfully');
+            } catch (e) {
+                console.error('Error saving data:', e);
+                alert('Failed to save data.');
+            }
+        }
+
+        function updateLanguage() {
+            const texts = {
+                en: {
+                    welcome: "NPMfinance Welcomes You",
+                    selectTool: "Select Tool",
+                    budgetTracker: "Budget Tracker",
+                    emiCalculator: "EMI Calculator",
+                    sipCalculator: "SIP Calculator",
+                    fdCalculator: "FD Calculator",
+                    goalSetting: "Goal Setting",
+                    investmentPortfolio: "Investment Portfolio",
+                    currencyConverter: "Currency Converter",
+                    financialTips: "Financial Tips",
+                    manageData: "Manage Data"
+                },
+                hi: {
+                    welcome: "NPMfinance आपका स्वागत करता है",
+                    selectTool: "टूल चुनें",
+                    budgetTracker: "बजट ट्रैकर",
+                    emiCalculator: "ईएमआई कैलकुलेटर",
+                    sipCalculator: "एसआईपी कैलकुलेटर",
+                    fdCalculator: "एफडी कैलकुलेटर",
+                    goalSetting: "लक्ष्य निर्धारण",
+                    investmentPortfolio: "निवेश पोर्टफोलियो",
+                    currencyConverter: "मुद्रा परिवर्तक",
+                    financialTips: "वित्तीय सुझाव",
+                    manageData: "डेटा प्रबंधन"
+                }
+            };
+            document.querySelector('.welcome').textContent = texts[language].welcome;
+            document.querySelector('.tool-selector label').textContent = texts[language].selectTool;
+            document.querySelector('.budgetdiv h3').textContent = texts[language].budgetTracker;
+            document.querySelector('.emidiv h3').textContent = texts[language].emiCalculator;
+            document.querySelector('.sipdiv h3').textContent = texts[language].sipCalculator;
+            document.querySelector('.fddiv h3').textContent = texts[language].fdCalculator;
+            document.querySelector('.goaldiv h3').textContent = texts[language].goalSetting;
+            document.querySelector('.portfoliodiv h3').textContent = texts[language].investmentPortfolio;
+            document.querySelector('.currencydiv h3').textContent = texts[language].currencyConverter;
+            document.querySelector('.tips h3').textContent = texts[language].financialTips;
+            document.querySelector('.manage-data h3').textContent = texts[language].manageData;
+            document.getElementById('search').innerHTML = `
+                <option value="">--${texts[language].selectTool}--</option>
+                <option value="budget">${texts[language].budgetTracker}</option>
+                <option value="emi">${texts[language].emiCalculator}</option>
+                <option value="sip">${texts[language].sipCalculator}</option>
+                <option value="fd">${texts[language].fdCalculator}</option>
+                <option value="goal">${texts[language].goalSetting}</option>
+                <option value="portfolio">${texts[language].investmentPortfolio}</option>
+                <option value="currency">${texts[language].currencyConverter}</option>
+            `;
+        }
+
+        function showbt() {
+            document.querySelectorAll('.budgetdiv, .emidiv, .sipdiv, .fddiv, .goaldiv, .portfoliodiv, .currencydiv').forEach(div => div.classList.add('hidden'));
+            const val = document.getElementById('search').value;
+            if (val) {
+                document.querySelector(`.${val}div`).classList.remove('hidden');
+                console.log(`Showing section: ${val}`);
+            }
+        }
+
+        // Budget Tracker
+        function addTransaction(e) {
+            e.preventDefault();
+            const desc = document.getElementById('desc').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const category = document.getElementById('category').value;
+            const date = document.getElementById('date').value;
+            if (desc && !isNaN(amount) && date) {
+                transactions.push({ desc, amount, category, date });
+                saveData();
+                renderTransactions();
+                document.getElementById('budgetForm').reset();
+                updateDashboard();
+                console.log('Transaction added:', { desc, amount, category, date });
+            } else {
+                alert('Please fill all fields with valid values.');
+            }
+        }
+
+        function renderTransactions() {
+            const ul = document.getElementById('transactions');
+            ul.innerHTML = '';
+            let balance = 0, income = 0, expenses = 0;
+            transactions.forEach((t, i) => {
+                balance += t.amount;
+                if (t.amount > 0) income += t.amount;
+                else expenses -= t.amount;
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${t.desc} (${t.category}, ${t.date}): ₹${t.amount.toFixed(2)}</span>
+                    <div>
+                        <button class="edit-btn" data-index="${i}" aria-label="Edit transaction">✏️</button>
+                        <button class="delete-btn" data-index="${i}" aria-label="Delete transaction">❌</button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+            document.getElementById('balance').textContent = balance.toFixed(2);
+            document.getElementById('total-income').textContent = income.toFixed(2);
+            document.getElementById('total-expenses').textContent = expenses.toFixed(2);
+            document.getElementById('net-savings').textContent = (income - expenses).toFixed(2);
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const i = parseInt(btn.dataset.index);
+                    document.getElementById('desc').value = transactions[i].desc;
+                    document.getElementById('amount').value = transactions[i].amount;
+                    document.getElementById('category').value = transactions[i].category;
+                    document.getElementById('date').value = transactions[i].date;
+                    transactions.splice(i, 1);
+                    saveData();
+                    renderTransactions();
+                    console.log('Editing transaction:', i);
+                });
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    transactions.splice(parseInt(btn.dataset.index), 1);
+                    saveData();
+                    renderTransactions();
+                    updateDashboard();
+                    console.log('Deleted transaction:', btn.dataset.index);
+                });
+            });
+        }
+
+        // EMI Calculator
+        function calculateEMI(e) {
+            e.preventDefault();
+            const P = parseFloat(document.getElementById('emiPrincipal').value);
+            const R = parseFloat(document.getElementById('emiRate').value) / 12 / 100;
+            const N = parseInt(document.getElementById('emiTenure').value);
+            if (P > 0 && R >= 0 && N > 0) {
+                const emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+                const totalPayment = emi * N;
+                const totalInterest = totalPayment - P;
+                emiHistory.push({ principal: P, rate: document.getElementById('emiRate').value, tenure: N, emi: emi.toFixed(2) });
+                saveData();
+                document.getElementById('emiResult').innerHTML = `
+                    <p>Monthly EMI: ₹${emi.toFixed(2)}</p>
+                    <p>Total Interest: ₹${totalInterest.toFixed(2)}</p>
+                    <p>Total Payment: ₹${totalPayment.toFixed(2)}</p>
+                `;
+                renderEmiHistory();
+                document.getElementById('emiForm').reset();
+                updateDashboard();
+                console.log('EMI calculated:', { emi, totalInterest, totalPayment });
+            } else {
+                alert('Please enter valid positive values.');
+            }
+        }
+
+        function renderEmiHistory() {
+            const div = document.getElementById('emiHistory');
+            div.innerHTML = emiHistory.map(h => `<p>Principal: ₹${h.principal}, Rate: ${h.rate}%, Tenure: ${h.tenure} months, EMI: ₹${h.emi}</p>`).join('');
+        }
+
+        // SIP Calculator
+        function calculateSIP(e) {
+            e.preventDefault();
+            const A = parseFloat(document.getElementById('sipAmount').value);
+            const r = parseFloat(document.getElementById('sipRate').value) / 12 / 100;
+            const n = parseInt(document.getElementById('sipYears').value) * 12;
+            const inflation = parseFloat(document.getElementById('sipInflation').value) / 100;
+            if (A > 0 && r >= 0 && n > 0 && !isNaN(inflation)) {
+                const futureValue = A * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+                const realValue = futureValue / Math.pow(1 + inflation, n / 12);
+                sipHistory.push({ amount: A, rate: document.getElementById('sipRate').value, years: document.getElementById('sipYears').value, futureValue: futureValue.toFixed(2) });
+                saveData();
+                document.getElementById('sipResult').innerHTML = `
+                    <p>Future Value: ₹${futureValue.toFixed(2)}</p>
+                    <p>Real Value (after ${inflation * 100}% inflation): ₹${realValue.toFixed(2)}</p>
+                `;
+                renderSipHistory();
+                updateSipChart(A, r, n);
+                document.getElementById('sipForm').reset();
+                updatePortfolio();
+                updateDashboard();
+                console.log('SIP calculated:', { futureValue, realValue });
+            } else {
+                alert('Please enter valid positive values.');
+            }
+        }
+
+        function renderSipHistory() {
+            const div = document.getElementById('sipHistory');
+            div.innerHTML = sipHistory.map(h => `<p>Monthly: ₹${h.amount}, Rate: ${h.rate}%, Years: ${h.years}, Future Value: ₹${h.futureValue}</p>`).join('');
+        }
+
+        function updateSipChart(A, r, n) {
+            if (A <= 0 || r < 0 || n <= 0) return;
+            const ctx = document.getElementById('sipChart').getContext('2d');
+            if (window.sipChart) window.sipChart.destroy();
+            const data = Array.from({ length: n + 1 }, (_, i) => A * ((Math.pow(1 + r, i) - 1) / r) * (1 + r));
+            window.sipChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: n + 1 }, (_, i) => `Month ${i}`),
+                    datasets: [{
+                        label: 'Investment Growth',
+                        data: data,
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true }, x: { ticks: { maxTicksLimit: 10 } } }
+                }
+            });
+        }
+
+        // FD Calculator
+        function calculateFD(e) {
+            e.preventDefault();
+            const P = parseFloat(document.getElementById('fdAmount').value);
+            const r = parseFloat(document.getElementById('fdRate').value) / 100;
+            const n = parseInt(document.getElementById('fdYears').value);
+            const freq = parseInt(document.getElementById('fdFrequency').value);
+            if (P > 0 && r >= 0 && n > 0 && freq > 0) {
+                const maturity = P * Math.pow(1 + r / freq, freq * n);
+                fdHistory.push({ amount: P, rate: document.getElementById('fdRate').value, years: n, frequency: freq, maturity: maturity.toFixed(2) });
+                saveData();
+                document.getElementById('fdResult').innerHTML = `
+                    <p>Maturity Amount: ₹${maturity.toFixed(2)}</p>
+                    <p>Interest Earned: ₹${(maturity - P).toFixed(2)}</p>
+                `;
+                renderFdHistory();
+                document.getElementById('fdForm').reset();
+                updatePortfolio();
+                updateDashboard();
+                console.log('FD calculated:', { maturity });
+            } else {
+                alert('Please enter valid positive values.');
+            }
+        }
+
+        function renderFdHistory() {
+            const div = document.getElementById('fdHistory');
+            div.innerHTML = fdHistory.map(h => `<p>Amount: ₹${h.amount}, Rate: ${h.rate}%, Years: ${h.years}, Freq: ${h.frequency}/year, Maturity: ₹${h.maturity}</p>`).join('');
+        }
+
+        // Goal Setting
+        function addGoal(e) {
+            e.preventDefault();
+            const desc = document.getElementById('goalDesc').value.trim();
+            const amount = parseFloat(document.getElementById('goalAmount').value);
+            const months = parseInt(document.getElementById('goalMonths').value);
+            if (desc && amount > 0 && months > 0) {
+                goals.push({ desc, amount, months, progress: 0 });
+                saveData();
+                renderGoals();
+                document.getElementById('goalForm').reset();
+                console.log('Goal added:', { desc, amount, months });
+            } else {
+                alert('Please enter valid goal details.');
+            }
+        }
+
+        function renderGoals() {
+            const ul = document.getElementById('goals');
+            ul.innerHTML = '';
+            goals.forEach((g, i) => {
+                const progress = (transactions.reduce((sum, t) => sum + (t.amount > 0 ? t.amount : 0), 0) / g.amount * 100).toFixed(2);
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${g.desc}: ₹${g.amount} in ${g.months} months (${progress}%)</span>
+                    <button class="delete-goal" data-index="${i}" aria-label="Delete goal">❌</button>
+                `;
+                ul.appendChild(li);
+            });
+            document.querySelectorAll('.delete-goal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    goals.splice(parseInt(btn.dataset.index), 1);
+                    saveData();
+                    renderGoals();
+                    console.log('Deleted goal:', btn.dataset.index);
+                });
+            });
+        }
+
+        // Investment Portfolio
+        function updatePortfolio() {
+            const ul = document.getElementById('portfolio-items');
+            portfolio = [...sipHistory.map(h => ({ type: 'SIP', amount: parseFloat(h.futureValue) })), ...fdHistory.map(h => ({ type: 'FD', amount: parseFloat(h.maturity) }))];
+            ul.innerHTML = portfolio.map(p => `<li>${p.type}: ₹${p.amount.toFixed(2)}</li>`).join('');
+            const ctx = document.getElementById('portfolio-chart').getContext('2d');
+            if (window.portfolioChart) window.portfolioChart.destroy();
+            const data = portfolio.reduce((acc, p) => { acc[p.type] = (acc[p.type] || 0) + p.amount; return acc; }, {});
+            if (Object.keys(data).length > 0) {
+                document.getElementById('portfolio-chart').style.display = 'block';
+                window.portfolioChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{
+                            data: Object.values(data),
+                            backgroundColor: ['#D4AF37', '#1D4ED8'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            } else {
+                document.getElementById('portfolio-chart').style.display = 'none';
+            }
+            updateDashboard();
+        }
+
+        // Currency Converter
+        function convertCurrency(e) {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('currencyAmount').value);
+            const from = document.getElementById('fromCurrency').value;
+            const to = document.getElementById('toCurrency').value;
+            if (amount > 0 && from !== to) {
+                const rates = { INR: 1, USD: 0.012, EUR: 0.011 }; // Placeholder
+                const converted = amount * rates[to] / rates[from];
+                document.getElementById('currencyResult').innerHTML = `<p>${amount} ${from} = ${converted.toFixed(2)} ${to}</p>`;
+                document.getElementById('currencyForm').reset();
+                console.log('Currency converted:', { amount, from, to, converted });
+            } else {
+                alert('Please enter a valid amount and different currencies.');
+            }
+        }
+
+        // Financial Tips
+        const tips = [
+            "Diversify your investments to reduce risk.",
+            "Create an emergency fund with 3-6 months' expenses.",
+            "Pay off high-interest debt before investing.",
+            "Review your budget monthly to stay on track.",
+            "Invest early to benefit from compound interest."
+        ];
+        let tipIndex = 0;
+        function renderTips() {
+            document.getElementById('tips-carousel').textContent = tips[tipIndex];
+        }
+
+        // Dashboard Update
+        function updateDashboard() {
+            const balance = transactions.reduce((sum, t) => sum + t.amount, 0);
+            const investments = portfolio.reduce((sum, p) => sum + p.amount, 0);
+            const emi = emiHistory.length > 0 ? emiHistory[emiHistory.length - 1].emi : 0;
+            document.getElementById('dashboard-balance').textContent = balance.toFixed(2);
+            document.getElementById('dashboard-emi').textContent = emi;
+            document.getElementById('dashboard-investments').textContent = investments.toFixed(2);
+        }
+
+        // Render All Sections
+        function renderAll() {
+            renderTransactions();
+            renderEmiHistory();
+            renderSipHistory();
+            renderFdHistory();
+            renderGoals();
+            updatePortfolio();
+            renderTips();
+            updateDashboard();
+        }
+
+        // Event Listeners
+        function initializeEventListeners() {
+            document.getElementById('budgetForm').addEventListener('submit', addTransaction);
+            document.getElementById('emiForm').addEventListener('submit', calculateEMI);
+            document.getElementById('sipForm').addEventListener('submit', calculateSIP);
+            document.getElementById('fdForm').addEventListener('submit', calculateFD);
+            document.getElementById('goalForm').addEventListener('submit', addGoal);
+            document.getElementById('currencyForm').addEventListener('submit', convertCurrency);
+            document.getElementById('search').addEventListener('change', showbt);
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                theme = theme === 'dark' ? 'light' : 'dark';
+                document.body.classList.toggle('light-theme', theme === 'light');
+                document.getElementById('theme-toggle').textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
+                saveData();
+                console.log('Theme toggled:', theme);
+            });
+            document.getElementById('language-select').addEventListener('change', () => {
+                language = document.getElementById('language-select').value;
+                saveData();
+                updateLanguage();
+                console.log('Language changed:', language);
+            });
+            document.getElementById('export-transactions').addEventListener('click', () => {
+                const blob = new Blob([JSON.stringify(transactions, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'transactions.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                console.log('Transactions exported');
+            });
+            document.getElementById('import-transactions-btn').addEventListener('click', () => {
+                document.getElementById('import-transactions').click();
+            });
+            document.getElementById('import-transactions').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            transactions = JSON.parse(ev.target.result);
+                            saveData();
+                            renderTransactions();
+                            updateDashboard();
+                            alert('Transactions imported successfully.');
+                            console.log('Transactions imported');
+                        } catch {
+                            alert('Invalid JSON file.');
+                            console.error('Invalid JSON for transactions');
+                        }
+                        e.target.value = '';
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            document.getElementById('export-all').addEventListener('click', () => {
+                const data = { transactions, emiHistory, sipHistory, fdHistory, goals, portfolio };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'npmfinance-data.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                console.log('All data exported');
+            });
+            document.getElementById('import-all-btn').addEventListener('click', () => {
+                document.getElementById('import-all').click();
+            });
+            document.getElementById('import-all').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            const data = JSON.parse(ev.target.result);
+                            transactions = data.transactions || [];
+                            emiHistory = data.emiHistory || [];
+                            sipHistory = data.sipHistory || [];
+                            fdHistory = data.fdHistory || [];
+                            goals = data.goals || [];
+                            portfolio = data.portfolio || [];
+                            saveData();
+                            renderAll();
+                            alert('Data imported successfully.');
+                            console.log('All data imported');
+                        } catch {
+                            alert('Invalid JSON file.');
+                            console.error('Invalid JSON for import');
+                        }
+                        e.target.value = '';
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            document.getElementById('clear-all').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all data?')) {
+                    transactions = [];
+                    emiHistory = [];
+                    sipHistory = [];
+                    fdHistory = [];
+                    goals = [];
+                    portfolio = [];
+                    localStorage.clear();
+                    saveData();
+                    renderAll();
+                    alert('All data cleared.');
+                    console.log('All data cleared');
+                }
+            });
+            document.getElementById('prev-tip').addEventListener('click', () => {
+                tipIndex = (tipIndex - 1 + tips.length) % tips.length;
+                renderTips();
+                console.log('Previous tip:', tipIndex);
+            });
+            document.getElementById('next-tip').addEventListener('click', () => {
+                tipIndex = (tipIndex + 1) % tips.length;
+                renderTips();
+                console.log('Next tip:', tipIndex);
+            });
+            document.getElementById('export-pdf').addEventListener('click', () => {
+                alert('PDF export is not implemented in this version.');
+                console.log('PDF export attempted');
+            });
+        }
+        /* ----- Automated Spending Analysis for NPMfinance ----- */
+/* Integrate with existing `transactions` array and localStorage */
+
+// ---------- 1) Quick category inference using keywords ----------
+const CATEGORY_KEYWORDS = {
+  food: ["zomato", "swiggy", "restaurant", "cafe", "coffee", "dominos", "mcdonald", "canteen", "food"],
+  bills: ["electricity", "water", "gas", "bill", "electric", "phone bill", "internet", "broadband", "postpaid"],
+  shopping: ["amazon", "flipkart", "myntra", "shirt", "shoes", "clothes", "shopping", "mall"],
+  transport: ["ola", "uber", "taxi", "bus", "train", "petrol", "fuel", "metro", "auto", "transport"],
+  entertainment: ["movie", "netflix", "prime", "spotify", "entertainment", "games"],
+  healthcare: ["doctor", "pharmacy", "medicine", "hospital", "clinic", "medical"],
+  education: ["school", "college", "tuition", "books", "course"],
+  rent: ["rent", "house rent", "apartment"],
+  savings: ["sip", "fd", "rd", "mutual", "investment", "bank transfer", "deposit"],
+  other: []
+};
+
+function inferCategory(desc = "") {
+  const s = (desc || "").toLowerCase();
+  for (const [cat, keys] of Object.entries(CATEGORY_KEYWORDS)) {
+    for (const k of keys) {
+      if (s.includes(k)) return cat;
+    }
+  }
+  // fallback heuristics
+  if (/\d{10}/.test(s) || s.includes("upi") || s.includes("bank")) return "other";
+  return "other";
+}
+
+// ---------- 2) Helpers: mean, std, groupBy ----------
+function mean(arr) { if (!arr.length) return 0; return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function std(arr) {
+  if (!arr.length) return 0;
+  const m = mean(arr);
+  return Math.sqrt(arr.reduce((s,x)=>s+(x-m)*(x-m),0)/arr.length);
+}
+function groupBy(arr, keyFn) {
+  return arr.reduce((acc,el)=>{ const k=keyFn(el); (acc[k]||(acc[k]=[])).push(el); return acc; },{});
+}
+
+// ---------- 3) Build user baseline (monthly expected %) ----------
+function computeBaseline(userProfile = {}, transactions = []) {
+  // userProfile can contain { monthlyIncome: number }
+  // default 50/30/20
+  const defaultBaseline = { needs:50, wants:30, savings:20 }; // percent
+  // Map categories to needs/wants/savings
+  const CAT_BUCKET = {
+    needs: ["food","bills","transport","healthcare","rent","education","other"],
+    wants: ["shopping","entertainment"],
+    savings: ["savings"]
+  };
+
+  // If monthlyIncome present, we still use percent baseline — but we can adapt tolerances later.
+  return { baselinePerc: defaultBaseline, catBucket: CAT_BUCKET };
+}
+
+// ---------- 4) Analyze transactions: returns annotated list + overall health ----------
+function analyzeTransactions(transactions = [], userProfile = {}) {
+  // Ensure each txn has: desc, amount, date (YYYY-MM-DD ideally). We'll parse date to ms.
+  const annotated = transactions.map(t => {
+    const dateMs = t.date ? (new Date(t.date)).getTime() : Date.now();
+    const category = t.category && t.category !== "Other" ? t.category.toLowerCase() : inferCategory(t.desc || t.desc || "");
+    return Object.assign({}, t, { category, dateMs });
+  });
+
+  // Group by category
+  const byCat = groupBy(annotated, t => t.category || "other");
+  // Stats per category
+  const catStats = {};
+  for (const [cat, txs] of Object.entries(byCat)) {
+    const amounts = txs.map(x => Math.abs(Number(x.amount) || 0));
+    catStats[cat] = { count: txs.length, mean: mean(amounts), std: std(amounts), total: amounts.reduce((a,b)=>a+b,0) };
+  }
+
+  // Detect frequency spikes and amount outliers
+  // Build quick merchant/desc signature
+  function merchantSignature(desc="") {
+    return (desc||"").toLowerCase().split(/\s+/).slice(0,2).join(" ").replace(/[^a-z0-9 ]/g,"");
+  }
+
+  const sigMap = {}; // signature => array of timestamps
+  annotated.forEach(t => {
+    const sig = merchantSignature(t.desc||"");
+    sigMap[sig] = sigMap[sig] || [];
+    sigMap[sig].push(t.dateMs);
+  });
+
+  // Monthly totals
+  const now = new Date();
+  const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  const monthTxns = annotated.filter(t => t.dateMs >= currentMonthStart);
+  const monthlyByCat = groupBy(monthTxns, t => t.category || "other");
+  const totalMonthly = monthTxns.reduce((s,t)=>s + Math.abs(Number(t.amount)||0),0);
+
+  // Baseline
+  const baseline = computeBaseline(userProfile, transactions);
+
+  // Annotate each txn
+  let totalPenalty = 0;
+  const results = annotated.map(t => {
+    const amt = Math.abs(Number(t.amount) || 0);
+    const stats = catStats[t.category] || {mean:0,std:0};
+    const signals = [];
+    // 1) amount outlier
+    if (stats.std > 0 && amt > (stats.mean + 2*stats.std) && stats.mean > 0) {
+      signals.push({ type: "amount_outlier", scoreImpact: -25, note: "Amount much larger than usual for this category" });
+    }
+    // 2) frequency spike same merchant in 24h
+    const sig = merchantSignature(t.desc||"");
+    if (sig && sigMap[sig]) {
+      const times = sigMap[sig].filter(ts => Math.abs(ts - t.dateMs) <= (24*3600*1000));
+      if (times.length >= 3) signals.push({ type: "freq_spike", scoreImpact: -20, note: "Multiple purchases at same place in 24h (possible impulse)" });
+    }
+    // 3) category overspend (if monthly totals and baseline known)
+    const monthlyCatTotal = (monthlyByCat[t.category] || []).reduce((s,x)=>s + Math.abs(Number(x.amount)||0),0);
+    const catBucket = baseline.catBucket;
+    // Determine bucket for this category
+    let bucketName = "needs";
+    for (const b of ["needs","wants","savings"]) {
+      if (catBucket[b].includes(t.category)) bucketName = b;
+    }
+    // compute monthly percent for this bucket
+    const bucketTotal = Object.entries(monthlyByCat).reduce((acc,[catName,arr])=>{
+      // include only cats in same bucket
+      if (catBucket[bucketName].includes(catName)) {
+        return acc + arr.reduce((s,x)=>s + Math.abs(Number(x.amount)||0),0);
+      }
+      return acc;
+    },0);
+
+    const bucketPerc = totalMonthly > 0 ? (bucketTotal / totalMonthly * 100) : 0;
+    const expectedPerc = baseline.baselinePerc[bucketName] || 0;
+    const tolerance = 15; // percent tolerance
+    if (bucketPerc > expectedPerc + tolerance && bucketName !== "savings") {
+      signals.push({ type: "bucket_over", scoreImpact: -15, note: `${bucketName} spending high vs baseline (${bucketPerc.toFixed(0)}% vs ${expectedPerc}%)` });
+    }
+
+    // 4) small amounts that are fine
+    if (amt <= 100) signals.push({ type: "micro_spend", scoreImpact: +5, note: "Small spend — usually okay" });
+
+    // 5) savings/investments are positive
+    if (bucketName === "savings") signals.push({ type: "savings", scoreImpact: +20, note: "Investment / saving — good" });
+
+    // Combine to a per-transaction score (base 50)
+    let txScore = 50;
+    signals.forEach(s => txScore += s.scoreImpact);
+    // clamp 0-100
+    txScore = Math.max(0, Math.min(100, txScore));
+
+    // Accumulate penalty/benefit for overall
+    totalPenalty += (txScore - 50) * -1; // lower score => penalty
+
+    return Object.assign({}, t, { amt, inferredBucket: bucketName, signals, txScore });
+  });
+
+  // Overall health score: start 70, subtract normalized penalty
+  const avgTxScore = results.length ? (results.reduce((s,x)=>s + x.txScore,0)/results.length) : 100;
+  // Combine with monthly pattern: if savings% < expected, penalize
+  const savingsBucketTotal = Object.keys(monthlyByCat).reduce((s,cat)=>{
+    if ((baseline.catBucket.savings || []).includes(cat)) {
+      return s + monthlyByCat[cat].reduce((ss,x)=>ss + Math.abs(Number(x.amount)||0),0);
+    }
+    return s;
+  },0);
+  const savingsPerc = totalMonthly > 0 ? (savingsBucketTotal / totalMonthly * 100) : 0;
+  const savingsExpected = baseline.baselinePerc.savings || 20;
+  let overallScore = avgTxScore;
+  if (savingsPerc < savingsExpected - 5) overallScore -= (savingsExpected - savingsPerc); // small penalty
+  overallScore = Math.max(0, Math.min(100, Math.round(overallScore)));
+
+  // Provide summary messages
+  const summary = {
+    totalMonthly, totalTxns: monthTxns.length,
+    savingsPerc: savingsPerc.toFixed(1),
+    overallScore,
+    verdict: overallScore >= 70 ? "Healthy" : (overallScore >= 40 ? "Caution" : "Wasteful")
+  };
+
+  return { results, catStats, summary };
+}
+
+// ---------- 5) UI integration helpers ----------
+function annotateAndSave(transactionsArr, userProfile) {
+  const analysis = analyzeTransactions(transactionsArr, userProfile);
+  // Save annotated transactions for quick UI display
+  localStorage.setItem('transactions_annotated', JSON.stringify(analysis.results));
+  localStorage.setItem('analysis_summary', JSON.stringify(analysis.summary));
+  // Also keep plain transactions saved
+  localStorage.setItem('transactions', JSON.stringify(transactionsArr));
+  return analysis;
+}
+
+// Example: Call this after you load or add a transaction
+// let analysis = annotateAndSave(transactions, { monthlyIncome: 30000 });
+// console.log("Summary:", analysis.summary);
+// console.log("Per-txn:", analysis.results);
+
+// ---------- 6) Small UI render example (hook into your existing renderTransactions) ----------
+function renderAnalysisSummaryInDOM() {
+  const containerId = 'analysis-summary'; // create a div with this id in HTML near dashboard
+  let summary = JSON.parse(localStorage.getItem('analysis_summary') || 'null');
+  if (!summary) {
+    document.getElementById(containerId) && (document.getElementById(containerId).innerHTML = '<p>No analysis yet.</p>');
+    return;
+  }
+  const html = `
+    <div>
+      <h4>Spending Health: ${summary.verdict} (${summary.overallScore}/100)</h4>
+      <p>This month: ₹${summary.totalMonthly.toFixed(2)} across ${summary.totalTxns} transactions.</p>
+      <p>Savings portion: ${summary.savingsPerc}% (expected ~20%)</p>
+    </div>
+  `;
+  document.getElementById(containerId) && (document.getElementById(containerId).innerHTML = html);
+}
+
+function renderAnnotatedTransactionsList() {
+  const annotated = JSON.parse(localStorage.getItem('transactions_annotated') || '[]');
+  const ul = document.getElementById('transactions'); // reuse your list
+  if (!ul) return;
+  ul.innerHTML = '';
+  annotated.slice().reverse().forEach((t, i) => {
+    const li = document.createElement('li');
+    const color = t.txScore >= 70 ? 'style="color:green;"' : (t.txScore >= 40 ? 'style="color:orange;"' : 'style="color:red;"');
+    li.innerHTML = `<span>${t.desc} (${t.category || 'other'}) - ₹${t.amt.toFixed(2)}</span>
+                    <span ${color}> ${t.txScore}/100 </span>
+                    <div style="font-size:0.8em;color:#ddd">${t.signals.map(s=>s.note).join(' • ')}</div>`;
+    ul.appendChild(li);
+  });
+}
+
+// Call these after rendering transactions or load
+// renderAnalysisSummaryInDOM(); renderAnnotatedTransactionsList();
+
+const analysis = annotateAndSave(transactions, { monthlyIncome: /* optional from user profile */ 3000 });
+renderAnalysisSummaryInDOM();
+renderAnnotatedTransactionsList();
+
+
+        // Initialize
+        window.onload = () => {
+            console.log('Initializing NPMfinance');
+            loadData();
+            initializeEventListeners();
+            renderAll();
+        };
+    </script>
+</body>
+</html>

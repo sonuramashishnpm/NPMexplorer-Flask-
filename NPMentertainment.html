@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPMentertainment</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='NPMmusic.css')}}">
+    <link rel="icon" href="{{url_for('static', filename='NPMentertainment.jpg')}}">
+</head>
+<body>
+    <header>NPMentertainment</header>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search songs, news, sports, etc. (e.g. Arijit Singh)">
+        <button onclick="searchSongs()">Search</button>
+    </div>
+
+    <div id="search-results" style="display: none;"></div>
+
+    <div id="homepage">
+        <section class="category">
+            <h2>News</h2>
+            <div class="video-container" id="news-videos"></div>
+        </section>
+        <section class="category">
+            <h2>Sports</h2>
+            <div class="video-container" id="sports-videos"></div>
+        </section>
+        <section class="category">
+            <h2>Entertainment</h2>
+            <div class="video-container" id="entertainment-videos"></div>
+        </section>
+        <section class="category">
+            <h2>Education</h2>
+            <div class="video-container" id="education-videos"></div>
+        </section>
+        <section class="category">
+            <h2>Tech</h2>
+            <div class="video-container" id="tech-videos"></div>
+        </section>
+    </div>
+
+    <script>
+        const apiKey = 'AIzaSyD3Cp43ns-TY5k23AL7RlDkKlB2oS_9q80'; // Replace with your YouTube API key
+        const categories = {
+            news: 'news',
+            sports: 'sports',
+            entertainment: 'entertainment',
+            education: 'education',
+            tech: 'technology'
+        };
+
+        async function fetchVideos(query, containerId) {
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=${encodeURIComponent(query)}&key=${apiKey}`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+
+                if (!data.items || !data.items.length) {
+                    container.innerHTML = "<p>No results found.</p>";
+                    return;
+                }
+
+                data.items.forEach(item => {
+                    const videoId = item.id.videoId;
+                    const title = item.snippet.title;
+                    const card = document.createElement("div");
+                    card.className = "video-card";
+                    card.innerHTML = `
+                        <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
+                        <div class="video-title">${title}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+                document.getElementById(containerId).innerHTML = "<p>Error loading videos.</p>";
+            }
+        }
+
+        async function searchSongs() {
+            const query = document.getElementById("searchInput").value.trim();
+            const resultDiv = document.getElementById("search-results");
+            const homepageDiv = document.getElementById("homepage");
+
+            if (query) {
+                resultDiv.style.display = 'block';
+                homepageDiv.style.display = 'none';
+                await fetchVideos(query, 'search-results');
+            } else {
+                resultDiv.style.display = 'none';
+                homepageDiv.style.display = 'block';
+            }
+        }
+
+        function loadCategories() {
+            Object.keys(categories).forEach(category => {
+                fetchVideos(categories[category], `${category}-videos`);
+            });
+        }
+
+        // Initial load
+        loadCategories();
+
+        // Auto-update every 30 minutes
+        setInterval(loadCategories, 30 * 60 * 1000);
+
+        // Update CSS link to match the previous artifact
+        document.querySelector('link[href="NPMmusic.css"]').href = 'NPMmusic.css';
+    </script>
+</body>
+</html>

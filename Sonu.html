@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sonu Kumar</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='Sonustyle.css')}}">
+  <link rel="icon" href="{{url_for('static', filename='sonu.png')}}" type="image/png">
+</head>
+
+<body>
+  <div id="header-container">
+    <!--<img src="sonu.png" id="header-image" alt="Sonu Kumar">-->
+  <div id="header-container1">  
+    <div id="header-container2">
+      <header id="header">
+        <p id="psonu">Sonu Kumar<sub id="sub">Viral Boy</sub></p>
+      </header>
+    </div>
+    <div id="header-container3"> <!-- Add this where you want the icon (e.g. inside #iinddiv) -->
+      <a href="https://www.facebook.com/people/Sonu-Kumar/100086909945617/" target="_blank" rel="noopener noreferrer"
+        aria-label="Sonu Kumar on Facebook" class="social-btnfb">
+        <img src="{{url_for('static', filename='Facebook_Logo_2023.png')}}" alt="Facebook" id="facebook-icon">
+      </a> <a href="https://npmexplorer.netlify.app" target="_blank" rel="noopener noreferrer" aria-label='NPMexplorer'
+        class="social-btnnpm">
+        <img src="{{url_for('static', filename='NPM.jpg')}}" alt="NPM Explorer" id="npm-icon">
+      </a>
+    </div>
+    </div>
+  </div>
+  <div id="div">
+    <div>
+      <img src="{{url_for('static', filename='sonu.png')}}" id="profile-image" alt="Sonu Kumar">
+      <h1 id="h1">HTML,CSS,<br>JavaScript,<br>Python,Developer(Web)</h1>
+    </div>
+    <div id="iinddiv">
+      <p>Hi! I’m <strong>Sonu Kumar</strong>, also known as <em>Viral Boy</em> — a passionate and curious developer who
+        loves turning ideas into interactive digital experiences.</p>
+      <p>Currently, I’m studying at <strong>Allen Career Institute</strong> and <strong>DISHA Delphi Public
+          School</strong> in Kota, Rajasthan, building a strong academic and technical foundation.</p>
+      <p>I am skilled in <strong>HTML</strong>, <strong>CSS</strong>, <strong>JavaScript</strong>, and
+        <strong>Python</strong>, with experience creating clean, responsive designs and functional logic for the web.
+      </p>
+      <p>One of my proudest projects is <a href="https://npmexplorer.netlify.app" target="_blank"
+          style="color: lightblue;">NPM Explorer</a> — a tool to easily search and explore npm packages, combining
+        elegant design with powerful features.</p>
+      <p>I’m always learning, experimenting, and pushing myself to create better, smarter projects that make an impact.
+      </p>
+    </div>
+    <div>
+      <img src="{{url_for('static', filename='Sonu2.png')}}" id="profile-image2" alt="Sonu Kumar">
+      <h1>Tedx Speaker</h1>
+    </div>
+  </div>
+        <h1 style="text-align: center; border: 5px solid cyan; border-radius: 50%;">Sonu's Achievments</h1>
+  <div id="sonuw">
+    <h1 id="fbbtn">Founder's Video</h1>
+  <div id="frame" >
+    <h2 style="text-align: center;"id="founder-video">Founder's Video</h2>
+    <iframe src="{{url_for('static', filename='FB_VID_568151509110431687.mp4')}}"style=margin-right:50px></iframe>
+  </div>
+  </div>
+  <div id="NPMiframe" >
+    <h2 style="text-align: center;">NPMexplorer<p>(Developed By Sonu)</p></h2>
+    <iframe src="https://npmexplorer.netlify.app" width="800px" height="600"  frameborder="0" allowtransparency="true" allowfullscreen="true"></iframe>
+</div>
+</div>
+</body>
+
+</html>
