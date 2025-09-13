@@ -14,6 +14,9 @@ def run_selenium(userq):
     options = Options()
     options.add_argument("--incognito")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--headless")   # ← Ye line add karo
+    options.add_argument("--no-sandbox") # ← server pe zaroori hota
+    options.add_argument("--disable-dev-shm-usage") # ← server crash avoid ke liye
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
 
@@ -98,3 +101,4 @@ def ask():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
