@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="input" placeholder="Enter a Country Name">
+        <button onclick="country()">Find Details</button>
+        <div id="inputg"></div>
+    </div>
+    <script>
+    
+    async function country() {
+        let a = document.getElementById("input").value.trim();
+        let b = encodeURIComponent(a);
+        fetch(`https://restcountries.com/v3.1/name/${b}`)
+            .then(res => {
+                if (!res.ok) {
+                    alert("Not found");
+                    return; // ✅ exit early if response is not OK
+                }
+                return res.json(); // ✅ move this outside if block
+
+            })
+            .then(data => {
+                showResult(data)
+            }
+
+            )
+
+
+
+
+
+    }
+    function showResult(data) {
+        document.getElementById("inputg").innerHTML = `Country: ${data[0].name.common}<br>
+        Capital: ${data[0].capital ?.[0]}<br>
+        Population: ${data[0].population}<br>`;
+
+
+    }
+</script>
+</body>
+
+
+</html>

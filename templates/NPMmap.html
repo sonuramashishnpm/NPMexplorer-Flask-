@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NPM Map</title>
+  <link href="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #mly {
+      width: 100vw;
+      height: 100vh;
+    }
+    #header {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">📍 NPM Map - Live Street View Viewer</div>
+  <div id="mly"></div>
+
+  <script src="https://unpkg.com/mapillary-js@4.1.2/dist/mapillary.js"></script>
+  <script>
+    const accessToken = 'MLY|30586733670942409|a403bbd08713ec17f59e3944ee3e209d';
+
+    // 🧭 Set a known image ID where Mapillary data exists (you can change it)
+    const knownImageId = '571573162048579'; // Example image in Delhi
+
+    // 🎯 Create viewer instance
+    const viewer = new Mapillary.Viewer({
+      container: 'mly',
+      imageId: knownImageId,
+      accessToken: accessToken,
+      component: {
+        cover: false,
+        direction: true,
+        sequence: true,
+        imagePlane: true
+      }
+    });
+
+    viewer.on('image', async (event) => {
+      const image = await viewer.getImage();
+      const latLon = image.latLon;
+      console.log("Now viewing location:", latLon);
+    });
+  </script>
+</body>
+</html>

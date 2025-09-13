@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NPM A.I</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Correct way to link CSS in Flask -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='NPMaistyle.css') }}">
+</head>
+<body>
+  <header class="header">NPM A.I.</header>
+  <video autoplay muted loop id="background-video">
+    <source src="{{ url_for('static', filename='NPM ai backgrond video.mp4') }}" type="video/mp4">
+  </video>
+  <div id="video-overlay"></div>
+  <h2>NPM A.I ask anything</h2>
+  <p>AI: <span id="response"></span></p>
+  <div class="stickdiv">
+    <input type="text" id="userInput" placeholder="Type your question here..." />
+    <button onclick="askAI()">Send</button>
+    <button onclick="startListening()">🎤 Speak</button>
+  </div>
+  <script>
+  async function askAI() {
+    const query = document.getElementById("userInput").value;
+    const responseEl = document.getElementById("response");
+    responseEl.innerHTML = "Thinking...";
+
+    try {
+      const res = await fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query })
+      });
+
+      const data = await res.json();
+      if (data.response) {
+        responseEl.innerHTML = data.response;
+      } else {
+        responseEl.innerHTML = "No response received.";
+      }
+    } catch (err) {
+      responseEl.innerHTML = "Error: " + err;
+    }
+  }
+</script>
+
+</body>
+</html>

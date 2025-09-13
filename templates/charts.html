@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPMstocks Chart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='NPMstocksstyle.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-roboto min-h-screen transition-colors duration-300">
+    <header class="article bg-blue-800 text-white text-center py-4 sm:py-6 text-2xl sm:text-3xl font-bold">
+        NPMstocks Chart
+        <button id="theme-toggle" class="ml-4 text-xs sm:text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-md" aria-label="Toggle theme">Toggle Theme</button>
+        <a href="{{ url_for('index') }}" class="ml-4 text-xs sm:text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-md">Back to Dashboard</a>
+    </header>
+    <div class="container max-w-6xl mx-auto p-2 sm:p-4">
+        <div class="stockschart bg-gray-800 rounded-lg p-4 shadow-lg">
+            <div id="chart-timebar" class="flex justify-between text-xs sm:text-sm text-gray-300 mb-2">
+                <span id="chart-symbol">AAPL</span>
+                <span id="chart-interval" class="cursor-pointer hover:text-blue-400">Interval: 1D</span>
+                <span id="chart-date"></span>
+                <span id="chart-time"></span>
+            </div>
+            <div id="tradingview-widget" class="h-[500px] sm:h-[800px]"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        let currentSymbol = "NASDAQ:AAPL";
+        let currentInterval = "D";
+        let theme = 'dark';
+
+        function loadData() {
+            try {
+                const savedSymbol = localStorage.getItem('currentSymbol');
+                const savedInterval = localStorage.getItem('currentInterval');
+                const savedTheme = localStorage.getItem('theme');
+                if (savedSymbol) currentSymbol = savedSymbol;
+                if (savedInterval) currentInterval = savedInterval;
+                if (savedTheme) {
+                    theme = savedTheme;
+                    document.body.classList.toggle('light-theme', theme === 'light');
+                }
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('symbol')) currentSymbol = params.get('symbol');
+                if (params.get('interval')) currentInterval = params.get('interval');
+            } catch (e) {
+                console.error('Error loading data:', e);
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('currentSymbol', currentSymbol);
+                localStorage.setItem('currentInterval', currentInterval);
+                localStorage.setItem('theme', theme);
+            } catch (e) {
+                console.error('Error saving data:', e);
+            }
+        }
+
+        function updateTheme() {
+            document.body.classList.toggle('light-theme', theme === 'light');
+            document.getElementById('theme-toggle').textContent = theme === 'dark' ? 'Light Theme' : 'Dark Theme';
+            document.getElementById('tradingview-widget').innerHTML = '';
+            loadTradingViewWidget(currentSymbol, currentInterval);
+        }
+
+        function updateTimeBar() {
+            document.getElementById('chart-symbol').textContent = currentSymbol.replace(/^.*:/, '');
+            document.getElementById('chart-interval').textContent = `Interval: ${currentInterval === "D" ? "1D" : currentInterval}`;
+            const now = new Date();
+            document.getElementById('chart-date').textContent = now.toLocaleDateString();
+            document.getElementById('chart-time').textContent = now.toLocaleTimeString();
+        }
+
+        function loadTradingViewWidget(symbol, interval = "D") {
+            currentSymbol = symbol;
+            currentInterval = interval;
+            saveData();
+            updateTimeBar();
+            new TradingView.widget({
+                "container_id": "tradingview-widget",
+                "width": "100%",
+                "height": "200%",
+                "symbol": symbol,
+                "interval": interval,
+                "timezone": "Etc/UTC",
+                "theme": theme,
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": theme === 'dark' ? "#1a1a1a" : "#f1f3f6",
+                "enable_publishing": true,
+                "withdateranges": true,
+                "allow_symbol_change": true,
+                "save_image": true,
+                "studies": [
+                    "MACD@tv-basicstudies",
+                    "RSI@tv-basicstudies",
+                    "StochasticRSI@tv-basicstudies"
+                ],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650",
+                "hide_side_toolbar": false,
+                "details": true,
+                "hotlist": true,
+                "calendar": true,
+                "show_news": true,
+                "hideideas": false
+            });
+        }
+
+        document.getElementById('chart-interval').addEventListener('click', () => {
+            const intervals = ["D", "W", "M"];
+            const idx = intervals.indexOf(currentInterval);
+            currentInterval = intervals[(idx + 1) % intervals.length];
+            document.getElementById('tradingview-widget').innerHTML = '';
+            loadTradingViewWidget(currentSymbol, currentInterval);
+        });
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            theme = theme === 'dark' ? 'light' : 'dark';
+            saveData();
+            updateTheme();
+        });
+
+        window.onload = () => {
+            loadData();
+            loadTradingViewWidget(currentSymbol, currentInterval);
+        };
+    </script>
+</body>
+</html>
