@@ -26,7 +26,7 @@ def create_driver():
 
     # auto-detect chromedriver path
     chrome_path = which("chromedriver")
-     chrome_bin_path = which("chromium")  
+    chrome_bin_path = which("chromium")  
     if not chrome_path:
         raise Exception("Chromedriver not found in PATH!")
     if not chrome_bin_path:
