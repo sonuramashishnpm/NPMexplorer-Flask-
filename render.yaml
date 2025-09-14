@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: flask-selenium-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python flaskai.py
+    plan: free
