@@ -24,19 +24,21 @@ def create_driver():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
 
-    # auto-detect chromedriver path
-    chrome_path = which("chromedriver")
-    chrome_bin_path = which("chromium")  
-    if not chrome_path:
+    # auto-detect chromedriver + chromium path
+    chrome_driver_path = which("chromedriver")
+    chrome_bin_path = which("chromium")
+
+    if not chrome_driver_path:
         raise Exception("Chromedriver not found in PATH!")
     if not chrome_bin_path:
         raise Exception("Chromium browser not found in PATH!")
+
     options.binary_location = chrome_bin_path
     service = Service(chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=options)
 
     # Anti-detection trick
-     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
             Object.defineProperty(navigator, 'webdriver', {
               get: () => undefined
