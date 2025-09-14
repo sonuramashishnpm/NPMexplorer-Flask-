@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from shutil import which
 import time
 import os
 import traceback
@@ -23,8 +24,12 @@ def create_driver():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
 
-    # Use system ChromeDriver installed via packages.txt
-    service = Service("/usr/bin/chromedriver")
+    # auto-detect chromedriver path
+    chrome_path = which("chromedriver")
+    if not chrome_path:
+        raise Exception("Chromedriver not found in PATH!")
+
+    service = Service(chrome_path)
     driver = webdriver.Chrome(service=service, options=options)
 
     # Anti-detection trick
