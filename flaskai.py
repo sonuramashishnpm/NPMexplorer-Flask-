@@ -39,7 +39,7 @@ def create_driver():
     chrome_bin_path = (
         which("chromium-browser")
         or which("chromium")
-        or "/usr/bin/chromium-browser"
+        or "/usr/bin/chromium"
     )
 
     if not os.path.exists(chrome_driver_path) or not os.path.exists(chrome_bin_path):
