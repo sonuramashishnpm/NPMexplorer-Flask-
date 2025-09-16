@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from shutil import which
 from urllib.parse import quote_plus
 import atexit
@@ -22,7 +23,6 @@ app = Flask(__name__)
 driver = None
 
 def create_driver():
-    # Chrome / Chromium options
     options = Options()
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
@@ -34,9 +34,13 @@ def create_driver():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
 
-    # Render ke liye fixed paths
+    # ✅ Driver and browser paths
     chrome_driver_path = which("chromedriver") or "/usr/bin/chromedriver"
-    chrome_bin_path = which("chromium-browser") or "/usr/bin/chromium-browser"
+    chrome_bin_path = (
+        which("chromium-browser")
+        or which("chromium")
+        or "/usr/bin/chromium-browser"
+    )
 
     if not os.path.exists(chrome_driver_path) or not os.path.exists(chrome_bin_path):
         tried = {
@@ -48,15 +52,14 @@ def create_driver():
         }
         raise Exception("Chromedriver or Chromium not found. Debug: " + repr(tried))
 
-    # set explicit binary (browser) location
+    # Tell selenium where Chromium binary is
     options.binary_location = chrome_bin_path
-
-    # create service and driver
     service = Service(chrome_driver_path)
-    driver_instance = webdriver.Chrome(service=service, options=options)
 
-    # small timeouts & anti-detection
+    driver_instance = webdriver.Chrome(service=service, options=options)
     driver_instance.set_page_load_timeout(30)
+
+    # Small anti-detection tweak
     try:
         driver_instance.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
             "source": """
@@ -84,8 +87,6 @@ atexit.register(cleanup_driver)
 # --------------------------
 # Selenium search runner
 # --------------------------
-from selenium.common.exceptions import TimeoutException
-
 def run_selenium(userq):
     global driver
     try:
@@ -130,7 +131,6 @@ def run_selenium(userq):
     except Exception as e:
         return f"Selenium error: {str(e)}\n{traceback.format_exc()}"
 
-
 # --------------------------
 # Flask Routes
 # --------------------------
@@ -159,7 +159,6 @@ def debug_paths():
     }
     return jsonify(info)
 
-
 # Example static routes
 @app.route("/NPM")
 def NPM(): return render_template("NPM.html")
@@ -183,7 +182,6 @@ def NPMstocks(): return render_template("NPMstocks.html")
 def Sonu(): return render_template("Sonu.html")
 @app.route("/charts")
 def charts(): return render_template("charts.html")
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
