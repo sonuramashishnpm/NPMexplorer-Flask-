@@ -35,10 +35,10 @@ def create_driver():
     options.add_experimental_option("useAutomationExtension", False)
 
     # ✅ Driver and browser paths
-    chrome_driver_path = which("chromedriver") or "/usr/bin/chromedriver"
+    
     chrome_bin_path = which("chromium") or "/usr/bin/chromium"
     chrome_bin_path = (
-        which("chromium-browser")
+       
         or which("chromium")
         or "/usr/bin/chromium"
     )
