@@ -11,8 +11,8 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/ask", methods=["POST"])
-def ask():
+@app.route("/NPMai")
+def ask():return render_template("NPMai.html")
     
 
 
