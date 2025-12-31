@@ -25,32 +25,37 @@
   </div>
 
   <script>
-    async function askAI() {
-      const userInput = document.getElementById("userInput").value;
-      const responseEl = document.getElementById("response");
+async function askAI() {
+  const userInput = document.getElementById("userInput").value;
+  const responseEl = document.getElementById("response");
 
-      if (!userInput) {
-        responseEl.innerText = "Please enter a question.";
-        return;
-      }
+  if (!userInput) {
+    responseEl.innerText = "Please enter a question.";
+    return;
+  }
 
-      responseEl.innerText = "Thinking...";
+  responseEl.innerText = "Thinking...";
 
-      try {
-        const response = await fetch("/askAI", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({prompt: userInput,})
-        });
-        const data = await response.json();
-        responseEl.innerText= data.response
-      }
-    }
-    document.getElementById("sendbtn").addEventListener("click",askAI)
-      </script>
+  try {
+    const response = await fetch("/askAI", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt: userInput })
+    });
+    const data = await response.json();
+    responseEl.innerText = data.response;
+  } catch (err) {
+    responseEl.innerText = "Error: " + err;
+  }
+}
+
+document.getElementById("sendbtn").addEventListener("click", askAI);
+</script>
+
 </body>
 </html>
+
 
 
