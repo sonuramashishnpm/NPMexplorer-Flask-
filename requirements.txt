@@ -1,2 +1,3 @@
 Flask==2.3.3
 npmai==0.0.8
+gunicorn
