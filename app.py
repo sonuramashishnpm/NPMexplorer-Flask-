@@ -11,8 +11,19 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-
-    
+@app.route("/askAI", methods=["POST"])
+def askAI():
+    llm=Ollama(
+        model="llama3.2",
+        temperature=0.9,
+    )
+    data=request.json
+    prompts=data.get("prompt")
+    if not prompts:
+        return jsonify({"response":"Sorry enter prompt"})
+    response=llm.invoke(prompts)
+    return jsonify({"response":response})
+        
 
 
 # Example static routes
