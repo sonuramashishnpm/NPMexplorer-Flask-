@@ -21,8 +21,7 @@
 
   <div class="stickdiv">
     <input type="text" id="userInput" placeholder="Type your question here..." />
-    <button onclick="askAI()">Send</button>
-    <button onclick="startListening()">🎤 Speak</button>
+    <button id="sendbtn">Send</button>
   </div>
 
   <script>
@@ -38,22 +37,20 @@
       responseEl.innerText = "Thinking...";
 
       try {
-        const response = await fetch("https://npmai-api.onrender.com/llm", {
+        const response = await fetch("/askAI", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            prompt: userInput,
-            model: "llama3.2",
-            temperature: 0.7
-          })
+          body: JSON.stringify({prompt: userInput,})
         });
         const data = await response.json();
         responseEl.innerText= data.response
       }
     }
+    document.getElementById("sendbtn").addEventListener("click",askAI)
       </script>
 </body>
 </html>
+
 
