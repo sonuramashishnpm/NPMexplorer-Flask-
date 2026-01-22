@@ -22,7 +22,7 @@ def askAI():
     if not prompts:
         return jsonify({"response":"Sorry enter prompt"})
     response=llm.invoke(prompts)
-    return response
+    return jsonify({"response":response})
         
 
 
