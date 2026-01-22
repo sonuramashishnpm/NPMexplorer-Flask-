@@ -44,8 +44,8 @@ async function askAI() {
       },
       body: JSON.stringify({ prompt: userInput })
     });
-    const data = await response.json();
-    responseEl.innerText = data.response;
+    const data = await response;
+    responseEl.innerText = data;
   } catch (err) {
     responseEl.innerText = "Error: " + err;
   }
@@ -56,6 +56,7 @@ document.getElementById("sendbtn").addEventListener("click", askAI);
 
 </body>
 </html>
+
 
 
 
